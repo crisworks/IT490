@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<script>
+
+function HandleLoginResponse(response)
+{
+	var text = String(JSON.parse(response));
+//	document.getElementById("textResponse").innerHTML = response+"<p>";	
+	document.getElementById("textResponse").innerHTML = "response: "+text+"<p>";
+
+}
+
+function SendTimestamp(timestamp) {
+
+	
+
+}
+
+function SendLoginRequest(username,password)
+{
+	var request = new XMLHttpRequest();
+	request.open("POST","login.php",true);
+	request.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	request.onreadystatechange= function ()
+	{
+		
+		if ((this.readyState == 4)&&(this.status == 200))
+		{
+			HandleLoginResponse(this.responseText);
+		}		
+	}
+
+	var username = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+
+	request.send("type=login&username="+username+"&password="+password);
+
+}
+</script>
+
+<meta charset = "utf-8">
+<html>
+
+<head>
+	<title>BookRex</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<div id="textResponse">
+awaiting response
+</div>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">BookRex</a>
+    </div>
+   
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="www.sample.com/favorites.html">Favorites</a></li>
+      <li><a href="#">To Read</a></li>
+    </ul>
+    
+    <form class="navbar-form navbar-left" action="/action_page.php">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search" name="search">
+        <div class="input-group-btn">
+          <button class="btn btn-default" type="submit">
+            <i class="glyphicon glyphicon-search"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</nav>
+
+
+
+<div class="container">
+  <h2>Sign in</h2>
+  
+  <form class="form-horizontal" method = "POST" id = "login" action = "javascript:SendLoginRequest()">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="username">Username:</label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="password">Password:</label>
+      <div class="col-sm-6">          
+        <input type="text" class="form-control" id="password" placeholder="Enter password" name="password">
+      </div>
+    </div>
+   
+    <div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label><input type="checkbox" name="remember"> Remember me</label>
+        </div>
+      </div>
+    </div>
+   
+    <div class="form-group">        
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+ 
+  </form>
+</div>
+
+</body>
+</html>
+
+
