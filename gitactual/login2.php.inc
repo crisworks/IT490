@@ -103,7 +103,10 @@ public function createLogin($username,$password)
 
 public function logOutUser($username){
 
-
+	$un = $this->logindb->real_escape_string($username);
+	$stmt = "delete from usersessions where username = '$un';";
+	$response = $this->logindb->query($stmt);
+	return 1;
 
 }
 
