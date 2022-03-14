@@ -25,12 +25,39 @@ public function genSessionID($timestamp) {
 	// store the string to the sessions table 
 }
 
+public function hashTime()
+{
+
+        $t = date("Y-m-d h:i:sa");
+        $ht = sha1($t);
+
+        return $ht;
+
+}
+
+
+public function storeHash($username)
+{
+
+        $un = $this->logindb->real_escape_string($username);
+        $hasht = hashTime();
+
+        $ins = "insert into usersessions values ('$un','$hasht');";
+        $response = $this->logindb->query($ins);
+}
+
+
 public function validateLogin($username,$password)
 {
 	$un = $this->logindb->real_escape_string($username);
 	$pw = $this->logindb->real_escape_string($password);
-	$statement = "select * from testusers where username = '$un'";
+	$statement = "select * from users where username = '$un'";
 	$response = $this->logindb->query($statement);
+
+	$t = date("Y-m-d h:i:sa");
+        $ht = sha1($t);
+
+//	$hasht = hashTime();
 
 	while ($row = $response->fetch_assoc())
 	{
@@ -38,13 +65,14 @@ public function validateLogin($username,$password)
 		if ($row["password"] == $pw)
 		{
 			echo "passwords match for $username".PHP_EOL;
+			$ins = "insert into usersessions values('$un','$ht');";
+			$response = $this->logindb->query($ins);
+			return 1;
 			//$response2 = $this->logindb->query($ins);
 		}
-		else
-		{
-			echo "passwords did not match for $username".PHP_EOL;
-			//return "incorrect password. try again."; 
-		}
+		
+		echo "passwords did not match for $username".PHP_EOL;
+			
 	}	
 	return 0;//no users matched username
 }
@@ -55,10 +83,47 @@ public function createLogin($username,$password)
 {
         $un = $this->logindb->real_escape_string($username);
         $pw = $this->logindb->real_escape_string($password);
-        $statement = "insert into users values('$un','$pw');";
-        $response = $this->logindb->query($statement);
+	$sel = "select * from users where username = '$un';";
+	$selquery = $this->logindb->query($sel);
+	$ins = "insert into users values('$un','$pw');";
+
+	if(mysqli_num_rows($selquery) ==0) {
+
+		echo "good to register user";
+		$response = $this->logindb->query($ins);
+		return 1;
+	}
+
+	else{
+		echo "username exists. try a different username.";
+		return 0;
+	}
+	
+	//$response = $this->logindb->query($statement);
 
 }
+
+// make a function that takes timestamp and hashes it
+
+//public function setGoals($goals)
+//{
+//	$go = $this->logindb->real_escape_string($goals);
+//	$sel = "select * from bookgoals where username = '$un';";
+//	$selquery = $this->logindb->query($sel);
+//	$ins = "insert into bookgoals values('$un','$go');";
+//	$rep = "replace into bookgoals values('$un','$go');"
+//
+//	if(mysqli_num_rows($selquery) == 0) {
+//		echo "reading goal set!";
+//		$response = $this->logindb->query($ins);
+//		return 1;
+//	}
+//	else {
+//		echo "new reading goal set!";
+//		$response = $this->logindb->query($rep);
+//		return 1;
+//	}
+//}
 
 }
 
